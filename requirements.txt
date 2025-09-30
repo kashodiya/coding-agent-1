@@ -1,0 +1,8 @@
+fastmcp
+mcp-agent
+langchain-aws
+boto3
+pydantic
+rich
+prompt-toolkit
+aiofiles

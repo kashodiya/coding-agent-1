@@ -1,0 +1,10 @@
+
+{
+  "mcpServers": {
+    "developer_tools": {
+      "command": "python",
+      "args": ["mcp_dev_server.py"],
+      "env": {}
+    }
+  }
+}

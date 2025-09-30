@@ -1,0 +1,18 @@
+{
+  "conversation_history": [
+    {
+      "role": "user",
+      "content": "My project uses FastAPI",
+      "timestamp": "2024-01-01T10:00:00"
+    }
+  ],
+  "task_plans": [],
+  "completed_tasks": [],
+  "learned_patterns": {
+    "use_fastapi": {
+      "count": 1,
+      "first_seen": "2024-01-01T10:00:00"
+    }
+  },
+  "error_log": []
+}
