@@ -75,7 +75,6 @@ class CodingAgent:
         self.region_name = region_name
         self.memory = AgentMemory()
         self.llm = None
-        self.mcp_app = None
         self.agent = None
         self.current_plan = None
         
@@ -96,13 +95,24 @@ class CodingAgent:
             }
         )
         
-        # Initialize MCP app and agent
-        self.mcp_app = MCPApp(name="coding_agent_app")
+        # Import the MCP server tools directly
+        from mcp_dev_server import (
+            read_file, write_file, append_file, delete_file,
+            create_directory, list_directory, delete_directory,
+            move_file, copy_file, execute_command, execute_python,
+            search_files, get_file_info, git_status, git_diff
+        )
         
-        # Start MCP app context
-        await self.mcp_app.__aenter__()
+        # Create list of tools
+        tools = [
+            read_file, write_file, append_file, delete_file,
+            create_directory, list_directory, delete_directory,
+            move_file, copy_file, execute_command, execute_python,
+            search_files, get_file_info, git_status, git_diff
+        ]
         
-        # Create agent with access to developer tools server
+        # Create agent with access to developer tools
+        # Note: mcp-agent's Agent class doesn't use context managers
         self.agent = Agent(
             name=self.name,
             instruction="""You are an experienced software engineer. You can:
@@ -121,19 +131,15 @@ class CodingAgent:
             - Document your work clearly
             
             Always think step-by-step and explain your reasoning.""",
-            server_names=["developer_tools"]  # This should match your MCP server name
+            model=self.llm,
+            tools=tools
         )
-        
-        await self.agent.__aenter__()
         
     async def cleanup(self):
         """Cleanup resources"""
-        if self.agent:
-            await self.agent.__aexit__(None, None, None)
-        if self.mcp_app:
-            await self.mcp_app.__aexit__(None, None, None)
         # Save memory before cleanup
         await self.memory.save_to_file(self.memory_file)
+        # Note: Agent and tools don't need explicit cleanup with current implementation
         
     async def plan_task(self, user_request: str) -> TaskPlan:
         """
